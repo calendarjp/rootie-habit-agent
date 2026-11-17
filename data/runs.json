@@ -1,0 +1,1314 @@
+[
+  {
+    "userId": "user_a",
+    "trigger": "morning",
+    "reactionType": null,
+    "plan": [
+      "behavior-analysis",
+      "knowledge-graph",
+      "habit-strategy",
+      "personalization",
+      "qa"
+    ],
+    "planNote": "トリガー「morning」→ 5エージェント実行（並列: feedback-evaluation × behavior-analysis）",
+    "logs": [
+      {
+        "agent": "behavior-analysis",
+        "ts": 1794915262945,
+        "detail": {
+          "task": "行動分析",
+          "result": "ステージ4(2〜3回目) / 阻害: 忙しくてできない / 確信度中（データ不足→推定）",
+          "basis": "来館2〜3回目",
+          "achieved": false
+        }
+      },
+      {
+        "agent": "knowledge-graph",
+        "ts": 1794915262945,
+        "detail": {
+          "task": "知識グラフ検索",
+          "result": "阻害[busy]に対応するメソッド候補: 超ミニマムゴール・ジム通い・チェーンプランニング・簡単スタートセッティング・具体ゴールセッティング",
+          "pastEvidence": "超ミニマムゴール:positive, 具体ゴールセッティング:neutral"
+        }
+      },
+      {
+        "agent": "habit-strategy",
+        "ts": 1794915262945,
+        "detail": {
+          "task": "メソッド選択",
+          "result": "超ミニマムゴール + チェーンプランニング + 簡単スタートセッティング",
+          "reasons": [
+            "阻害タイプ「忙しくてできない」→ 基本方針: 少しで成功とし、安定して時間が取れるタイミングを探す",
+            "ステージ4「2〜3回目」→ 2〜3回目 に適した補正を適用",
+            "知識グラフ検索: 過去に効果のあった「超ミニマムゴール」を優先"
+          ]
+        }
+      },
+      {
+        "agent": "personalization",
+        "ts": 1794915262945,
+        "detail": {
+          "task": "メッセージ調整",
+          "result": "トリガー=morning / 送信=07:30（本人設定） / 頻度上限=1回/日",
+          "preview": "おはようございます、Aさん！今日も自分のペースで🌱 週2回ジムで筋トレに向けて、今日は「超ミニマム…"
+        }
+      },
+      {
+        "agent": "qa",
+        "ts": 1794915262945,
+        "detail": {
+          "task": "品質検証",
+          "result": "PASS"
+        }
+      },
+      {
+        "agent": "orchestrator",
+        "ts": 1794915262945,
+        "detail": {
+          "task": "方針統合",
+          "result": "介入方針確定: 超ミニマムゴール + チェーンプランニング + 簡単スタートセッティング / 送信07:30（本人設定）"
+        }
+      }
+    ],
+    "policy": {
+      "methods": [
+        {
+          "id": "mini_goal",
+          "no": 9,
+          "name": "超ミニマムゴール",
+          "category": "行動",
+          "principle": "P3",
+          "desc": "1分でも始めれば成功。最低限の目標は引き上げない"
+        },
+        {
+          "id": "chain_planning",
+          "no": 1,
+          "name": "チェーンプランニング",
+          "category": "準備",
+          "principle": "P1",
+          "desc": "既存の習慣の前後に新しい行動をつなげる"
+        },
+        {
+          "id": "easy_start",
+          "no": 3,
+          "name": "簡単スタートセッティング",
+          "category": "準備",
+          "principle": "P3",
+          "desc": "行動を始める前の手間を減らす"
+        }
+      ],
+      "reason": [
+        "阻害タイプ「忙しくてできない」→ 基本方針: 少しで成功とし、安定して時間が取れるタイミングを探す",
+        "ステージ4「2〜3回目」→ 2〜3回目 に適した補正を適用",
+        "知識グラフ検索: 過去に効果のあった「超ミニマムゴール」を優先"
+      ],
+      "timing": "07:30（本人設定）",
+      "maxDailyContacts": 1,
+      "nextHint": "",
+      "overridden": false
+    },
+    "analysis": {
+      "visitsPerWeek": 0.8,
+      "targetRate": 0.38,
+      "achieved": false,
+      "stage": {
+        "id": 4,
+        "name": "2〜3回目",
+        "basis": "来館2〜3回目"
+      },
+      "barriers": [
+        {
+          "id": "busy",
+          "name": "忙しくてできない",
+          "policy": "少しで成功とし、安定して時間が取れるタイミングを探す"
+        }
+      ],
+      "barrierEvidence": [
+        {
+          "type": "忙しくてできない",
+          "evidence": "チャットで「忙しい」と複数回発言"
+        }
+      ],
+      "activeHours": [
+        21,
+        22
+      ],
+      "confidence": "中",
+      "dataInsufficient": true,
+      "estimated": true,
+      "avgMinutes": 24,
+      "visitCount": 3
+    },
+    "evaluation": null,
+    "message": "おはようございます、Aさん！今日も自分のペースで🌱 週2回ジムで筋トレに向けて、今日は「超ミニマムゴール」がおすすめ。「既存の習慣の前後に新しい行動をつなげる」を意識してみてください。行けたら、あとで教えてくださいね。",
+    "qa": {
+      "noGuiltLanguage": true,
+      "violations": [],
+      "agentsCooperated": true,
+      "chain": [
+        "behavior-analysis",
+        "knowledge-graph",
+        "habit-strategy",
+        "personalization"
+      ],
+      "strategyReflectsAnalysis": true,
+      "dataIntegrity": true,
+      "singleSuggestion": true
+    },
+    "durationMs": 1,
+    "costJPY": 0,
+    "id": "run_1794915262945_pmuk"
+  },
+  {
+    "userId": "user_b",
+    "trigger": "morning",
+    "reactionType": null,
+    "plan": [
+      "behavior-analysis",
+      "knowledge-graph",
+      "habit-strategy",
+      "personalization",
+      "qa"
+    ],
+    "planNote": "トリガー「morning」→ 5エージェント実行（並列: feedback-evaluation × behavior-analysis）",
+    "logs": [
+      {
+        "agent": "behavior-analysis",
+        "ts": 1794915262958,
+        "detail": {
+          "task": "行動分析",
+          "result": "ステージ7(間が空いての復活) / 阻害: がんばりすぎ / 確信度中（データ不足→推定）",
+          "basis": "後半4回と来館が回復傾向",
+          "achieved": true
+        }
+      },
+      {
+        "agent": "knowledge-graph",
+        "ts": 1794915262958,
+        "detail": {
+          "task": "知識グラフ検索",
+          "result": "阻害[overdoing]に対応するメソッド候補: 超ミニマムゴール・ジム通い・簡単スタートセッティング・ほめちぎりモチベート・エブリデイハビット",
+          "pastEvidence": "エブリデイハビット:negative, 超ミニマムゴール:positive"
+        }
+      },
+      {
+        "agent": "habit-strategy",
+        "ts": 1794915262959,
+        "detail": {
+          "task": "メソッド選択",
+          "result": "超ミニマムゴール + 簡単スタートセッティング + ほめちぎりモチベート",
+          "reasons": [
+            "阻害タイプ「がんばりすぎ」→ 基本方針: ハードルを上げすぎず、少しずつ取り組む",
+            "ステージ7「間が空いての復活」→ 間が空いての復活 に適した補正を適用",
+            "知識グラフ検索: 過去に効果のあった「超ミニマムゴール」を優先"
+          ]
+        }
+      },
+      {
+        "agent": "personalization",
+        "ts": 1794915262959,
+        "detail": {
+          "task": "メッセージ調整",
+          "result": "トリガー=morning / 送信=07:00（本人設定） / 頻度上限=1回/日",
+          "preview": "おはようございます、Bさん！今日も自分のペースで🌱 毎日ジムで1時間トレーニングに向けて、今日は「…"
+        }
+      },
+      {
+        "agent": "qa",
+        "ts": 1794915262959,
+        "detail": {
+          "task": "品質検証",
+          "result": "PASS"
+        }
+      },
+      {
+        "agent": "orchestrator",
+        "ts": 1794915262959,
+        "detail": {
+          "task": "方針統合",
+          "result": "介入方針確定: 超ミニマムゴール + 簡単スタートセッティング + ほめちぎりモチベート / 送信07:00（本人設定）"
+        }
+      }
+    ],
+    "policy": {
+      "methods": [
+        {
+          "id": "mini_goal",
+          "no": 9,
+          "name": "超ミニマムゴール",
+          "category": "行動",
+          "principle": "P3",
+          "desc": "1分でも始めれば成功。最低限の目標は引き上げない"
+        },
+        {
+          "id": "easy_start",
+          "no": 3,
+          "name": "簡単スタートセッティング",
+          "category": "準備",
+          "principle": "P3",
+          "desc": "行動を始める前の手間を減らす"
+        },
+        {
+          "id": "praise_motivate",
+          "no": 14,
+          "name": "ほめちぎりモチベート",
+          "category": "報酬",
+          "principle": "P6",
+          "desc": "行動の前・途中・後に積極的に褒める"
+        }
+      ],
+      "reason": [
+        "阻害タイプ「がんばりすぎ」→ 基本方針: ハードルを上げすぎず、少しずつ取り組む",
+        "ステージ7「間が空いての復活」→ 間が空いての復活 に適した補正を適用",
+        "知識グラフ検索: 過去に効果のあった「超ミニマムゴール」を優先"
+      ],
+      "timing": "07:00（本人設定）",
+      "maxDailyContacts": 1,
+      "nextHint": "",
+      "overridden": false
+    },
+    "analysis": {
+      "visitsPerWeek": 1.3,
+      "targetRate": 0.18,
+      "achieved": true,
+      "stage": {
+        "id": 7,
+        "name": "間が空いての復活",
+        "basis": "後半4回と来館が回復傾向"
+      },
+      "barriers": [
+        {
+          "id": "overdoing",
+          "name": "がんばりすぎ",
+          "policy": "ハードルを上げすぎず、少しずつ取り組む"
+        }
+      ],
+      "barrierEvidence": [
+        {
+          "type": "がんばりすぎ",
+          "evidence": "目標週7回に対し実際は週1.3回（目標過大の兆候）"
+        }
+      ],
+      "activeHours": [
+        19,
+        20
+      ],
+      "confidence": "中",
+      "dataInsufficient": true,
+      "estimated": true,
+      "avgMinutes": 58,
+      "visitCount": 5
+    },
+    "evaluation": null,
+    "message": "おはようございます、Bさん！今日も自分のペースで🌱 毎日ジムで1時間トレーニングに向けて、今日は「超ミニマムゴール」がおすすめ。「行動を始める前の手間を減らす」を意識してみてください。行けたら、あとで教えてくださいね。",
+    "qa": {
+      "noGuiltLanguage": true,
+      "violations": [],
+      "agentsCooperated": true,
+      "chain": [
+        "behavior-analysis",
+        "knowledge-graph",
+        "habit-strategy",
+        "personalization"
+      ],
+      "strategyReflectsAnalysis": true,
+      "dataIntegrity": true,
+      "singleSuggestion": true
+    },
+    "durationMs": 1,
+    "costJPY": 0,
+    "id": "run_1794915262959_as1m"
+  },
+  {
+    "userId": "user_c",
+    "trigger": "morning",
+    "reactionType": null,
+    "plan": [
+      "behavior-analysis",
+      "knowledge-graph",
+      "habit-strategy",
+      "personalization",
+      "qa"
+    ],
+    "planNote": "トリガー「morning」→ 5エージェント実行（並列: feedback-evaluation × behavior-analysis）",
+    "logs": [
+      {
+        "agent": "behavior-analysis",
+        "ts": 1794915262971,
+        "detail": {
+          "task": "行動分析",
+          "result": "ステージ11(定着期) / 阻害: 習慣化問題なし / 確信度高",
+          "basis": "4週間で11回来館・週2.8回の安定ペース",
+          "achieved": true
+        }
+      },
+      {
+        "agent": "knowledge-graph",
+        "ts": 1794915262971,
+        "detail": {
+          "task": "知識グラフ検索",
+          "result": "阻害[none]に対応するメソッド候補: デイリー進歩チェック・ジム通い・簡単レコード",
+          "pastEvidence": "デイリー進歩チェック:positive"
+        }
+      },
+      {
+        "agent": "habit-strategy",
+        "ts": 1794915262971,
+        "detail": {
+          "task": "メソッド選択",
+          "result": "デイリー進歩チェック + 簡単レコード + ほめちぎりモチベート",
+          "reasons": [
+            "阻害タイプ「習慣化問題なし」→ 基本方針: 過剰介入しない",
+            "ステージ11「定着期」→ 定着期 に適した補正を適用",
+            "知識グラフ検索: 過去に効果のあった「デイリー進歩チェック」を優先"
+          ]
+        }
+      },
+      {
+        "agent": "personalization",
+        "ts": 1794915262971,
+        "detail": {
+          "task": "メッセージ調整",
+          "result": "トリガー=morning / 送信=07:00（本人設定） / 頻度上限=1回/日",
+          "preview": "おはようございます、Cさん！今日も自分のペースで🌱 週3回ジムでランニングに向けて、今日は「デイリ…"
+        }
+      },
+      {
+        "agent": "qa",
+        "ts": 1794915262971,
+        "detail": {
+          "task": "品質検証",
+          "result": "PASS"
+        }
+      },
+      {
+        "agent": "orchestrator",
+        "ts": 1794915262971,
+        "detail": {
+          "task": "方針統合",
+          "result": "介入方針確定: デイリー進歩チェック + 簡単レコード + ほめちぎりモチベート / 送信07:00（本人設定）"
+        }
+      }
+    ],
+    "policy": {
+      "methods": [
+        {
+          "id": "daily_progress",
+          "no": 15,
+          "name": "デイリー進歩チェック",
+          "category": "報酬",
+          "principle": "P7",
+          "desc": "日々の進歩を可視化する"
+        },
+        {
+          "id": "easy_record",
+          "no": 12,
+          "name": "簡単レコード",
+          "category": "報酬",
+          "principle": "P7",
+          "desc": "行動記録を簡単に残す"
+        },
+        {
+          "id": "praise_motivate",
+          "no": 14,
+          "name": "ほめちぎりモチベート",
+          "category": "報酬",
+          "principle": "P6",
+          "desc": "行動の前・途中・後に積極的に褒める"
+        }
+      ],
+      "reason": [
+        "阻害タイプ「習慣化問題なし」→ 基本方針: 過剰介入しない",
+        "ステージ11「定着期」→ 定着期 に適した補正を適用",
+        "知識グラフ検索: 過去に効果のあった「デイリー進歩チェック」を優先"
+      ],
+      "timing": "07:00（本人設定）",
+      "maxDailyContacts": 1,
+      "nextHint": "",
+      "overridden": false
+    },
+    "analysis": {
+      "visitsPerWeek": 2.8,
+      "targetRate": 0.92,
+      "achieved": true,
+      "stage": {
+        "id": 11,
+        "name": "定着期",
+        "basis": "4週間で11回来館・週2.8回の安定ペース"
+      },
+      "barriers": [
+        {
+          "id": "none",
+          "name": "習慣化問題なし",
+          "policy": "過剰介入しない"
+        }
+      ],
+      "barrierEvidence": [
+        {
+          "type": "習慣化問題なし",
+          "evidence": "週2.8回の来館で成功判定を継続中"
+        }
+      ],
+      "activeHours": [
+        7,
+        18
+      ],
+      "confidence": "高",
+      "dataInsufficient": false,
+      "estimated": false,
+      "avgMinutes": 47,
+      "visitCount": 11
+    },
+    "evaluation": null,
+    "message": "おはようございます、Cさん！今日も自分のペースで🌱 週3回ジムでランニングに向けて、今日は「デイリー進歩チェック」がおすすめ。「行動記録を簡単に残す」を意識してみてください。行けたら、あとで教えてくださいね。",
+    "qa": {
+      "noGuiltLanguage": true,
+      "violations": [],
+      "agentsCooperated": true,
+      "chain": [
+        "behavior-analysis",
+        "knowledge-graph",
+        "habit-strategy",
+        "personalization"
+      ],
+      "strategyReflectsAnalysis": true,
+      "dataIntegrity": true,
+      "singleSuggestion": true
+    },
+    "durationMs": 0,
+    "costJPY": 0,
+    "id": "run_1794915262971_bjxj"
+  },
+  {
+    "userId": "user_a",
+    "trigger": "chat",
+    "reactionType": "busy",
+    "plan": [
+      "feedback-evaluation",
+      "behavior-analysis",
+      "knowledge-graph",
+      "habit-strategy",
+      "personalization",
+      "qa"
+    ],
+    "planNote": "トリガー「chat」→ 6エージェント実行（並列: feedback-evaluation × behavior-analysis）",
+    "logs": [
+      {
+        "agent": "feedback-evaluation",
+        "ts": 1794915262984,
+        "detail": {
+          "task": "介入評価",
+          "result": "超ミニマムゴール → neutral（反応あり（busy）ただし来館なし）",
+          "nextHint": "ハードルをさらに下げる/時間帯を変える"
+        }
+      },
+      {
+        "agent": "behavior-analysis",
+        "ts": 1794915262984,
+        "detail": {
+          "task": "行動分析",
+          "result": "ステージ4(2〜3回目) / 阻害: 忙しくてできない / 確信度中（データ不足→推定）",
+          "basis": "来館2〜3回目",
+          "achieved": false
+        }
+      },
+      {
+        "agent": "knowledge-graph",
+        "ts": 1794915262984,
+        "detail": {
+          "task": "知識グラフ検索",
+          "result": "阻害[busy]に対応するメソッド候補: 超ミニマムゴール・ジム通い・チェーンプランニング・簡単スタートセッティング・具体ゴールセッティング",
+          "pastEvidence": "超ミニマムゴール:positive, 具体ゴールセッティング:neutral, 超ミニマムゴール:pending"
+        }
+      },
+      {
+        "agent": "habit-strategy",
+        "ts": 1794915262984,
+        "detail": {
+          "task": "メソッド選択",
+          "result": "超ミニマムゴール + チェーンプランニング + 簡単スタートセッティング",
+          "reasons": [
+            "阻害タイプ「忙しくてできない」→ 基本方針: 少しで成功とし、安定して時間が取れるタイミングを探す",
+            "ステージ4「2〜3回目」→ 2〜3回目 に適した補正を適用",
+            "知識グラフ検索: 過去に効果のあった「超ミニマムゴール」を優先"
+          ]
+        }
+      },
+      {
+        "agent": "personalization",
+        "ts": 1794915262984,
+        "detail": {
+          "task": "メッセージ調整",
+          "result": "トリガー=chat/反応=busy / 送信=21時台（来館しやすい時間帯） / 頻度上限=1回/日",
+          "preview": "お忙しい中、返信ありがとうございます。無理のない範囲で大丈夫です。Aさんの「超ミニマムゴール」方式で…"
+        }
+      },
+      {
+        "agent": "qa",
+        "ts": 1794915262984,
+        "detail": {
+          "task": "品質検証",
+          "result": "PASS"
+        }
+      },
+      {
+        "agent": "orchestrator",
+        "ts": 1794915262984,
+        "detail": {
+          "task": "方針統合",
+          "result": "介入方針確定: 超ミニマムゴール + チェーンプランニング + 簡単スタートセッティング / 送信21時台（来館しやすい時間帯）"
+        }
+      }
+    ],
+    "policy": {
+      "methods": [
+        {
+          "id": "mini_goal",
+          "no": 9,
+          "name": "超ミニマムゴール",
+          "category": "行動",
+          "principle": "P3",
+          "desc": "1分でも始めれば成功。最低限の目標は引き上げない"
+        },
+        {
+          "id": "chain_planning",
+          "no": 1,
+          "name": "チェーンプランニング",
+          "category": "準備",
+          "principle": "P1",
+          "desc": "既存の習慣の前後に新しい行動をつなげる"
+        },
+        {
+          "id": "easy_start",
+          "no": 3,
+          "name": "簡単スタートセッティング",
+          "category": "準備",
+          "principle": "P3",
+          "desc": "行動を始める前の手間を減らす"
+        }
+      ],
+      "reason": [
+        "阻害タイプ「忙しくてできない」→ 基本方針: 少しで成功とし、安定して時間が取れるタイミングを探す",
+        "ステージ4「2〜3回目」→ 2〜3回目 に適した補正を適用",
+        "知識グラフ検索: 過去に効果のあった「超ミニマムゴール」を優先"
+      ],
+      "timing": "21時台（来館しやすい時間帯）",
+      "maxDailyContacts": 1,
+      "nextHint": "ハードルをさらに下げる/時間帯を変える",
+      "overridden": false
+    },
+    "analysis": {
+      "visitsPerWeek": 0.8,
+      "targetRate": 0.38,
+      "achieved": false,
+      "stage": {
+        "id": 4,
+        "name": "2〜3回目",
+        "basis": "来館2〜3回目"
+      },
+      "barriers": [
+        {
+          "id": "busy",
+          "name": "忙しくてできない",
+          "policy": "少しで成功とし、安定して時間が取れるタイミングを探す"
+        }
+      ],
+      "barrierEvidence": [
+        {
+          "type": "忙しくてできない",
+          "evidence": "チャットで「忙しい」と複数回発言"
+        }
+      ],
+      "activeHours": [
+        21,
+        22
+      ],
+      "confidence": "中",
+      "dataInsufficient": true,
+      "estimated": true,
+      "avgMinutes": 24,
+      "visitCount": 3
+    },
+    "evaluation": {
+      "effect": "neutral",
+      "note": "反応あり（busy）ただし来館なし",
+      "methodId": "mini_goal",
+      "nextHint": "ハードルをさらに下げる/時間帯を変える"
+    },
+    "message": "お忙しい中、返信ありがとうございます。無理のない範囲で大丈夫です。Aさんの「超ミニマムゴール」方式で、今日は「着替えて10分だけ」を目安にしませんか？1分だけでも成功のうちです🌿",
+    "qa": {
+      "noGuiltLanguage": true,
+      "violations": [],
+      "agentsCooperated": true,
+      "chain": [
+        "feedback-evaluation",
+        "behavior-analysis",
+        "knowledge-graph",
+        "habit-strategy",
+        "personalization"
+      ],
+      "strategyReflectsAnalysis": true,
+      "dataIntegrity": true,
+      "singleSuggestion": true
+    },
+    "durationMs": 0,
+    "costJPY": 0,
+    "id": "run_1794915262984_332o"
+  },
+  {
+    "userId": "user_b",
+    "trigger": "chat",
+    "reactionType": "success",
+    "plan": [
+      "feedback-evaluation",
+      "behavior-analysis",
+      "knowledge-graph",
+      "habit-strategy",
+      "personalization",
+      "qa"
+    ],
+    "planNote": "トリガー「chat」→ 6エージェント実行（並列: feedback-evaluation × behavior-analysis）",
+    "logs": [
+      {
+        "agent": "feedback-evaluation",
+        "ts": 1794915262995,
+        "detail": {
+          "task": "介入評価",
+          "result": "超ミニマムゴール → positive（介入後に来館・報告あり）",
+          "nextHint": "同じトーンで褒めを継続し、少しずつ目標を引き上げ"
+        }
+      },
+      {
+        "agent": "behavior-analysis",
+        "ts": 1794915262995,
+        "detail": {
+          "task": "行動分析",
+          "result": "ステージ7(間が空いての復活) / 阻害: がんばりすぎ / 確信度中（データ不足→推定）",
+          "basis": "後半4回と来館が回復傾向",
+          "achieved": true
+        }
+      },
+      {
+        "agent": "knowledge-graph",
+        "ts": 1794915262995,
+        "detail": {
+          "task": "知識グラフ検索",
+          "result": "阻害[overdoing]に対応するメソッド候補: 超ミニマムゴール・ジム通い・簡単スタートセッティング・ほめちぎりモチベート・エブリデイハビット",
+          "pastEvidence": "エブリデイハビット:negative, 超ミニマムゴール:positive, 超ミニマムゴール:pending"
+        }
+      },
+      {
+        "agent": "habit-strategy",
+        "ts": 1794915262995,
+        "detail": {
+          "task": "メソッド選択",
+          "result": "超ミニマムゴール + 簡単スタートセッティング + ほめちぎりモチベート",
+          "reasons": [
+            "阻害タイプ「がんばりすぎ」→ 基本方針: ハードルを上げすぎず、少しずつ取り組む",
+            "ステージ7「間が空いての復活」→ 間が空いての復活 に適した補正を適用",
+            "知識グラフ検索: 過去に効果のあった「超ミニマムゴール」を優先"
+          ]
+        }
+      },
+      {
+        "agent": "personalization",
+        "ts": 1794915262995,
+        "detail": {
+          "task": "メッセージ調整",
+          "result": "トリガー=chat/反応=success / 送信=19時台（来館しやすい時間帯） / 頻度上限=1回/日",
+          "preview": "Bさん、すごい！今日ジムに行けたんですね✨ 「5分だけ行ってきた！」までしっかりやれていて、本当にえ…"
+        }
+      },
+      {
+        "agent": "qa",
+        "ts": 1794915262995,
+        "detail": {
+          "task": "品質検証",
+          "result": "PASS"
+        }
+      },
+      {
+        "agent": "orchestrator",
+        "ts": 1794915262995,
+        "detail": {
+          "task": "方針統合",
+          "result": "介入方針確定: 超ミニマムゴール + 簡単スタートセッティング + ほめちぎりモチベート / 送信19時台（来館しやすい時間帯）"
+        }
+      }
+    ],
+    "policy": {
+      "methods": [
+        {
+          "id": "mini_goal",
+          "no": 9,
+          "name": "超ミニマムゴール",
+          "category": "行動",
+          "principle": "P3",
+          "desc": "1分でも始めれば成功。最低限の目標は引き上げない"
+        },
+        {
+          "id": "easy_start",
+          "no": 3,
+          "name": "簡単スタートセッティング",
+          "category": "準備",
+          "principle": "P3",
+          "desc": "行動を始める前の手間を減らす"
+        },
+        {
+          "id": "praise_motivate",
+          "no": 14,
+          "name": "ほめちぎりモチベート",
+          "category": "報酬",
+          "principle": "P6",
+          "desc": "行動の前・途中・後に積極的に褒める"
+        }
+      ],
+      "reason": [
+        "阻害タイプ「がんばりすぎ」→ 基本方針: ハードルを上げすぎず、少しずつ取り組む",
+        "ステージ7「間が空いての復活」→ 間が空いての復活 に適した補正を適用",
+        "知識グラフ検索: 過去に効果のあった「超ミニマムゴール」を優先"
+      ],
+      "timing": "19時台（来館しやすい時間帯）",
+      "maxDailyContacts": 1,
+      "nextHint": "同じトーンで褒めを継続し、少しずつ目標を引き上げ",
+      "overridden": false
+    },
+    "analysis": {
+      "visitsPerWeek": 1.3,
+      "targetRate": 0.18,
+      "achieved": true,
+      "stage": {
+        "id": 7,
+        "name": "間が空いての復活",
+        "basis": "後半4回と来館が回復傾向"
+      },
+      "barriers": [
+        {
+          "id": "overdoing",
+          "name": "がんばりすぎ",
+          "policy": "ハードルを上げすぎず、少しずつ取り組む"
+        }
+      ],
+      "barrierEvidence": [
+        {
+          "type": "がんばりすぎ",
+          "evidence": "目標週7回に対し実際は週1.3回（目標過大の兆候）"
+        }
+      ],
+      "activeHours": [
+        19,
+        20
+      ],
+      "confidence": "中",
+      "dataInsufficient": true,
+      "estimated": true,
+      "avgMinutes": 58,
+      "visitCount": 5
+    },
+    "evaluation": {
+      "effect": "positive",
+      "note": "介入後に来館・報告あり",
+      "methodId": "mini_goal",
+      "nextHint": "同じトーンで褒めを継続し、少しずつ目標を引き上げ"
+    },
+    "message": "Bさん、すごい！今日ジムに行けたんですね✨ 「5分だけ行ってきた！」までしっかりやれていて、本当にえらいです。この調子で無理なく続けていきましょう。",
+    "qa": {
+      "noGuiltLanguage": true,
+      "violations": [],
+      "agentsCooperated": true,
+      "chain": [
+        "feedback-evaluation",
+        "behavior-analysis",
+        "knowledge-graph",
+        "habit-strategy",
+        "personalization"
+      ],
+      "strategyReflectsAnalysis": true,
+      "dataIntegrity": true,
+      "singleSuggestion": true
+    },
+    "durationMs": 0,
+    "costJPY": 0,
+    "id": "run_1794915262995_lptt"
+  },
+  {
+    "userId": "user_a",
+    "trigger": "check",
+    "reactionType": null,
+    "plan": [
+      "behavior-analysis",
+      "knowledge-graph",
+      "habit-strategy",
+      "personalization",
+      "qa"
+    ],
+    "planNote": "トリガー「check」→ 5エージェント実行（並列: feedback-evaluation × behavior-analysis）",
+    "logs": [
+      {
+        "agent": "behavior-analysis",
+        "ts": 1794915285460,
+        "detail": {
+          "task": "行動分析",
+          "result": "ステージ4(2〜3回目) / 阻害: 忙しくてできない / 確信度中（データ不足→推定）",
+          "basis": "来館2〜3回目",
+          "achieved": false
+        }
+      },
+      {
+        "agent": "knowledge-graph",
+        "ts": 1794915285460,
+        "detail": {
+          "task": "知識グラフ検索",
+          "result": "阻害[busy]に対応するメソッド候補: 超ミニマムゴール・ジム通い・チェーンプランニング・簡単スタートセッティング・具体ゴールセッティング",
+          "pastEvidence": "超ミニマムゴール:positive, 具体ゴールセッティング:neutral, 超ミニマムゴール:pending, 超ミニマムゴール:neutral"
+        }
+      },
+      {
+        "agent": "habit-strategy",
+        "ts": 1794915285460,
+        "detail": {
+          "task": "メソッド選択",
+          "result": "超ミニマムゴール + チェーンプランニング + 簡単スタートセッティング",
+          "reasons": [
+            "阻害タイプ「忙しくてできない」→ 基本方針: 少しで成功とし、安定して時間が取れるタイミングを探す",
+            "ステージ4「2〜3回目」→ 2〜3回目 に適した補正を適用",
+            "知識グラフ検索: 過去に効果のあった「超ミニマムゴール」を優先"
+          ]
+        }
+      },
+      {
+        "agent": "personalization",
+        "ts": 1794915285460,
+        "detail": {
+          "task": "メッセージ調整",
+          "result": "トリガー=check / 送信=21時台（来館しやすい時間帯） / 頻度上限=1回/日",
+          "preview": "Aさんの調子どうですか？今のステージは「2〜3回目」。「超ミニマムゴール」で、少しずついきましょう。…"
+        }
+      },
+      {
+        "agent": "qa",
+        "ts": 1794915285460,
+        "detail": {
+          "task": "品質検証",
+          "result": "PASS"
+        }
+      },
+      {
+        "agent": "orchestrator",
+        "ts": 1794915285460,
+        "detail": {
+          "task": "方針統合",
+          "result": "介入方針確定: 超ミニマムゴール + チェーンプランニング + 簡単スタートセッティング / 送信21時台（来館しやすい時間帯）"
+        }
+      }
+    ],
+    "policy": {
+      "methods": [
+        {
+          "id": "mini_goal",
+          "no": 9,
+          "name": "超ミニマムゴール",
+          "category": "行動",
+          "principle": "P3",
+          "desc": "1分でも始めれば成功。最低限の目標は引き上げない"
+        },
+        {
+          "id": "chain_planning",
+          "no": 1,
+          "name": "チェーンプランニング",
+          "category": "準備",
+          "principle": "P1",
+          "desc": "既存の習慣の前後に新しい行動をつなげる"
+        },
+        {
+          "id": "easy_start",
+          "no": 3,
+          "name": "簡単スタートセッティング",
+          "category": "準備",
+          "principle": "P3",
+          "desc": "行動を始める前の手間を減らす"
+        }
+      ],
+      "reason": [
+        "阻害タイプ「忙しくてできない」→ 基本方針: 少しで成功とし、安定して時間が取れるタイミングを探す",
+        "ステージ4「2〜3回目」→ 2〜3回目 に適した補正を適用",
+        "知識グラフ検索: 過去に効果のあった「超ミニマムゴール」を優先"
+      ],
+      "timing": "21時台（来館しやすい時間帯）",
+      "maxDailyContacts": 1,
+      "nextHint": "",
+      "overridden": false
+    },
+    "analysis": {
+      "visitsPerWeek": 0.8,
+      "targetRate": 0.38,
+      "achieved": false,
+      "stage": {
+        "id": 4,
+        "name": "2〜3回目",
+        "basis": "来館2〜3回目"
+      },
+      "barriers": [
+        {
+          "id": "busy",
+          "name": "忙しくてできない",
+          "policy": "少しで成功とし、安定して時間が取れるタイミングを探す"
+        }
+      ],
+      "barrierEvidence": [
+        {
+          "type": "忙しくてできない",
+          "evidence": "チャットで「忙しい」と複数回発言"
+        }
+      ],
+      "activeHours": [
+        21,
+        22
+      ],
+      "confidence": "中",
+      "dataInsufficient": true,
+      "estimated": true,
+      "avgMinutes": 24,
+      "visitCount": 3
+    },
+    "evaluation": null,
+    "message": "Aさんの調子どうですか？今のステージは「2〜3回目」。「超ミニマムゴール」で、少しずついきましょう。 無理のない範囲で今日のひとことを聞かせてください。",
+    "qa": {
+      "noGuiltLanguage": true,
+      "violations": [],
+      "agentsCooperated": true,
+      "chain": [
+        "behavior-analysis",
+        "knowledge-graph",
+        "habit-strategy",
+        "personalization"
+      ],
+      "strategyReflectsAnalysis": true,
+      "dataIntegrity": true,
+      "singleSuggestion": true
+    },
+    "durationMs": 1,
+    "costJPY": 0,
+    "id": "run_1794915285460_ygte"
+  },
+  {
+    "userId": "user_b",
+    "trigger": "check",
+    "reactionType": null,
+    "plan": [
+      "behavior-analysis",
+      "knowledge-graph",
+      "habit-strategy",
+      "personalization",
+      "qa"
+    ],
+    "planNote": "トリガー「check」→ 5エージェント実行（並列: feedback-evaluation × behavior-analysis）",
+    "logs": [
+      {
+        "agent": "behavior-analysis",
+        "ts": 1794915285461,
+        "detail": {
+          "task": "行動分析",
+          "result": "ステージ7(間が空いての復活) / 阻害: がんばりすぎ / 確信度中（データ不足→推定）",
+          "basis": "後半4回と来館が回復傾向",
+          "achieved": true
+        }
+      },
+      {
+        "agent": "knowledge-graph",
+        "ts": 1794915285461,
+        "detail": {
+          "task": "知識グラフ検索",
+          "result": "阻害[overdoing]に対応するメソッド候補: 超ミニマムゴール・ジム通い・簡単スタートセッティング・ほめちぎりモチベート・エブリデイハビット",
+          "pastEvidence": "エブリデイハビット:negative, 超ミニマムゴール:positive, 超ミニマムゴール:pending, 超ミニマムゴール:positive"
+        }
+      },
+      {
+        "agent": "habit-strategy",
+        "ts": 1794915285461,
+        "detail": {
+          "task": "メソッド選択",
+          "result": "超ミニマムゴール + 簡単スタートセッティング + ほめちぎりモチベート",
+          "reasons": [
+            "阻害タイプ「がんばりすぎ」→ 基本方針: ハードルを上げすぎず、少しずつ取り組む",
+            "ステージ7「間が空いての復活」→ 間が空いての復活 に適した補正を適用",
+            "知識グラフ検索: 過去に効果のあった「超ミニマムゴール」を優先"
+          ]
+        }
+      },
+      {
+        "agent": "personalization",
+        "ts": 1794915285461,
+        "detail": {
+          "task": "メッセージ調整",
+          "result": "トリガー=check / 送信=19時台（来館しやすい時間帯） / 頻度上限=1回/日",
+          "preview": "Bさんの調子どうですか？今のリズムとても良いので、維持を応援しています💪 無理のない範囲で今日のひ…"
+        }
+      },
+      {
+        "agent": "qa",
+        "ts": 1794915285461,
+        "detail": {
+          "task": "品質検証",
+          "result": "PASS"
+        }
+      },
+      {
+        "agent": "orchestrator",
+        "ts": 1794915285461,
+        "detail": {
+          "task": "方針統合",
+          "result": "介入方針確定: 超ミニマムゴール + 簡単スタートセッティング + ほめちぎりモチベート / 送信19時台（来館しやすい時間帯）"
+        }
+      }
+    ],
+    "policy": {
+      "methods": [
+        {
+          "id": "mini_goal",
+          "no": 9,
+          "name": "超ミニマムゴール",
+          "category": "行動",
+          "principle": "P3",
+          "desc": "1分でも始めれば成功。最低限の目標は引き上げない"
+        },
+        {
+          "id": "easy_start",
+          "no": 3,
+          "name": "簡単スタートセッティング",
+          "category": "準備",
+          "principle": "P3",
+          "desc": "行動を始める前の手間を減らす"
+        },
+        {
+          "id": "praise_motivate",
+          "no": 14,
+          "name": "ほめちぎりモチベート",
+          "category": "報酬",
+          "principle": "P6",
+          "desc": "行動の前・途中・後に積極的に褒める"
+        }
+      ],
+      "reason": [
+        "阻害タイプ「がんばりすぎ」→ 基本方針: ハードルを上げすぎず、少しずつ取り組む",
+        "ステージ7「間が空いての復活」→ 間が空いての復活 に適した補正を適用",
+        "知識グラフ検索: 過去に効果のあった「超ミニマムゴール」を優先"
+      ],
+      "timing": "19時台（来館しやすい時間帯）",
+      "maxDailyContacts": 1,
+      "nextHint": "",
+      "overridden": false
+    },
+    "analysis": {
+      "visitsPerWeek": 1.3,
+      "targetRate": 0.18,
+      "achieved": true,
+      "stage": {
+        "id": 7,
+        "name": "間が空いての復活",
+        "basis": "後半4回と来館が回復傾向"
+      },
+      "barriers": [
+        {
+          "id": "overdoing",
+          "name": "がんばりすぎ",
+          "policy": "ハードルを上げすぎず、少しずつ取り組む"
+        }
+      ],
+      "barrierEvidence": [
+        {
+          "type": "がんばりすぎ",
+          "evidence": "目標週7回に対し実際は週1.3回（目標過大の兆候）"
+        }
+      ],
+      "activeHours": [
+        19,
+        20
+      ],
+      "confidence": "中",
+      "dataInsufficient": true,
+      "estimated": true,
+      "avgMinutes": 58,
+      "visitCount": 5
+    },
+    "evaluation": null,
+    "message": "Bさんの調子どうですか？今のリズムとても良いので、維持を応援しています💪 無理のない範囲で今日のひとことを聞かせてください。",
+    "qa": {
+      "noGuiltLanguage": true,
+      "violations": [],
+      "agentsCooperated": true,
+      "chain": [
+        "behavior-analysis",
+        "knowledge-graph",
+        "habit-strategy",
+        "personalization"
+      ],
+      "strategyReflectsAnalysis": true,
+      "dataIntegrity": true,
+      "singleSuggestion": true
+    },
+    "durationMs": 0,
+    "costJPY": 0,
+    "id": "run_1794915285461_6rxq"
+  },
+  {
+    "userId": "user_c",
+    "trigger": "check",
+    "reactionType": null,
+    "plan": [
+      "behavior-analysis",
+      "knowledge-graph",
+      "habit-strategy",
+      "personalization",
+      "qa"
+    ],
+    "planNote": "トリガー「check」→ 5エージェント実行（並列: feedback-evaluation × behavior-analysis）",
+    "logs": [
+      {
+        "agent": "behavior-analysis",
+        "ts": 1794915285462,
+        "detail": {
+          "task": "行動分析",
+          "result": "ステージ11(定着期) / 阻害: 習慣化問題なし / 確信度高",
+          "basis": "4週間で11回来館・週2.8回の安定ペース",
+          "achieved": true
+        }
+      },
+      {
+        "agent": "knowledge-graph",
+        "ts": 1794915285462,
+        "detail": {
+          "task": "知識グラフ検索",
+          "result": "阻害[none]に対応するメソッド候補: デイリー進歩チェック・ジム通い・簡単レコード",
+          "pastEvidence": "デイリー進歩チェック:positive, デイリー進歩チェック:pending"
+        }
+      },
+      {
+        "agent": "habit-strategy",
+        "ts": 1794915285462,
+        "detail": {
+          "task": "メソッド選択",
+          "result": "デイリー進歩チェック + 簡単レコード + ほめちぎりモチベート",
+          "reasons": [
+            "阻害タイプ「習慣化問題なし」→ 基本方針: 過剰介入しない",
+            "ステージ11「定着期」→ 定着期 に適した補正を適用",
+            "知識グラフ検索: 過去に効果のあった「デイリー進歩チェック」を優先"
+          ]
+        }
+      },
+      {
+        "agent": "personalization",
+        "ts": 1794915285462,
+        "detail": {
+          "task": "メッセージ調整",
+          "result": "トリガー=check / 送信=7時台（来館しやすい時間帯） / 頻度上限=1回/日",
+          "preview": "Cさんの調子どうですか？今のリズムとても良いので、維持を応援しています💪 無理のない範囲で今日のひ…"
+        }
+      },
+      {
+        "agent": "qa",
+        "ts": 1794915285462,
+        "detail": {
+          "task": "品質検証",
+          "result": "PASS"
+        }
+      },
+      {
+        "agent": "orchestrator",
+        "ts": 1794915285462,
+        "detail": {
+          "task": "方針統合",
+          "result": "介入方針確定: デイリー進歩チェック + 簡単レコード + ほめちぎりモチベート / 送信7時台（来館しやすい時間帯）"
+        }
+      }
+    ],
+    "policy": {
+      "methods": [
+        {
+          "id": "daily_progress",
+          "no": 15,
+          "name": "デイリー進歩チェック",
+          "category": "報酬",
+          "principle": "P7",
+          "desc": "日々の進歩を可視化する"
+        },
+        {
+          "id": "easy_record",
+          "no": 12,
+          "name": "簡単レコード",
+          "category": "報酬",
+          "principle": "P7",
+          "desc": "行動記録を簡単に残す"
+        },
+        {
+          "id": "praise_motivate",
+          "no": 14,
+          "name": "ほめちぎりモチベート",
+          "category": "報酬",
+          "principle": "P6",
+          "desc": "行動の前・途中・後に積極的に褒める"
+        }
+      ],
+      "reason": [
+        "阻害タイプ「習慣化問題なし」→ 基本方針: 過剰介入しない",
+        "ステージ11「定着期」→ 定着期 に適した補正を適用",
+        "知識グラフ検索: 過去に効果のあった「デイリー進歩チェック」を優先"
+      ],
+      "timing": "7時台（来館しやすい時間帯）",
+      "maxDailyContacts": 1,
+      "nextHint": "",
+      "overridden": false
+    },
+    "analysis": {
+      "visitsPerWeek": 2.8,
+      "targetRate": 0.92,
+      "achieved": true,
+      "stage": {
+        "id": 11,
+        "name": "定着期",
+        "basis": "4週間で11回来館・週2.8回の安定ペース"
+      },
+      "barriers": [
+        {
+          "id": "none",
+          "name": "習慣化問題なし",
+          "policy": "過剰介入しない"
+        }
+      ],
+      "barrierEvidence": [
+        {
+          "type": "習慣化問題なし",
+          "evidence": "週2.8回の来館で成功判定を継続中"
+        }
+      ],
+      "activeHours": [
+        7,
+        18
+      ],
+      "confidence": "高",
+      "dataInsufficient": false,
+      "estimated": false,
+      "avgMinutes": 47,
+      "visitCount": 11
+    },
+    "evaluation": null,
+    "message": "Cさんの調子どうですか？今のリズムとても良いので、維持を応援しています💪 無理のない範囲で今日のひとことを聞かせてください。",
+    "qa": {
+      "noGuiltLanguage": true,
+      "violations": [],
+      "agentsCooperated": true,
+      "chain": [
+        "behavior-analysis",
+        "knowledge-graph",
+        "habit-strategy",
+        "personalization"
+      ],
+      "strategyReflectsAnalysis": true,
+      "dataIntegrity": true,
+      "singleSuggestion": true
+    },
+    "durationMs": 0,
+    "costJPY": 0,
+    "id": "run_1794915285462_714n"
+  }
+]

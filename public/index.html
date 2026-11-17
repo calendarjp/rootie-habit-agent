@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rootie — あなたの習慣を育てるAIパートナー</title>
+<style>
+  :root {
+    --ivory: #FBF8F1; --cream: #FFF7E8; --green: #A8C8A0; --green-deep: #6E8F66;
+    --orange: #F5C99B; --orange-deep: #E09A5A; --ink: #4A4238; --sub: #8C8478;
+    --card: #FFFFFF; --line: #EFE8DA;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  body { font-family: "Hiragino Maru Gothic ProN", "Yu Gothic", sans-serif; background: var(--ivory); color: var(--ink); height: 100vh; display: flex; }
+  /* ---- sidebar ---- */
+  .side { width: 260px; background: var(--cream); padding: 20px 16px; display: flex; flex-direction: column; gap: 14px; }
+  .logo { display: flex; align-items: center; gap: 10px; }
+  .logo h1 { font-size: 22px; color: var(--green-deep); letter-spacing: 1px; }
+  .tag { font-size: 11px; color: var(--sub); }
+  .users { display: flex; flex-direction: column; gap: 8px; }
+  .users .label { font-size: 11px; color: var(--sub); }
+  .user-btn { display: flex; align-items: center; gap: 8px; background: #fff; border: 2px solid var(--line); border-radius: 14px; padding: 10px 12px; cursor: pointer; transition: .2s; text-align: left; }
+  .user-btn:hover { border-color: var(--green); }
+  .user-btn.on { border-color: var(--green-deep); background: #F0F6EC; }
+  .avatar { width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 13px; color: #fff; flex-shrink: 0; }
+  .u-a { background: var(--orange); } .u-b { background: #E8A2A2; } .u-c { background: var(--green); }
+  .user-btn small { display: block; color: var(--sub); font-size: 10px; }
+  .triggers { display: flex; flex-direction: column; gap: 6px; margin-top: 4px; }
+  .trig { background: var(--green); color: #fff; border: none; border-radius: 12px; padding: 9px; font-size: 12px; cursor: pointer; }
+  .trig:hover { background: var(--green-deep); }
+  .trig.n2 { background: var(--orange); } .trig.n2:hover { background: var(--orange-deep); }
+  .admin-link { margin-top: auto; font-size: 11px; color: var(--sub); text-decoration: none; padding: 8px; text-align: center; background: #fff; border-radius: 10px; }
+  /* ---- main ---- */
+  .main { flex: 1; display: flex; flex-direction: column; max-width: 720px; margin: 0 auto; width: 100%; }
+  .head { padding: 18px 22px; display: flex; align-items: center; gap: 12px; }
+  .head h2 { font-size: 17px; }
+  .head .sub2 { font-size: 12px; color: var(--sub); }
+  .chat { flex: 1; overflow-y: auto; padding: 10px 22px 20px; display: flex; flex-direction: column; gap: 12px; }
+  .msg { display: flex; gap: 10px; max-width: 92%; }
+  .msg.me { align-self: flex-end; flex-direction: row-reverse; }
+  .bubble { padding: 12px 16px; border-radius: 18px; font-size: 14px; line-height: 1.65; background: var(--card); border: 1px solid var(--line); border-top-left-radius: 6px; box-shadow: 0 1px 2px rgba(0,0,0,.03); white-space: pre-wrap; }
+  .msg.me .bubble { background: #EAF3E4; border-color: #D5E5CB; border-top-left-radius: 18px; border-top-right-radius: 6px; }
+  .method-tag { display: inline-block; margin-top: 8px; font-size: 10px; background: var(--cream); color: var(--orange-deep); border-radius: 8px; padding: 3px 8px; border: 1px solid #F2DFC5; }
+  .foot { padding: 14px 22px 20px; background: linear-gradient(transparent, var(--ivory) 40%); }
+  .input-row { display: flex; gap: 8px; }
+  .input-row input { flex: 1; border: 2px solid var(--line); border-radius: 16px; padding: 12px 16px; font-size: 14px; background: #fff; outline: none; }
+  .input-row input:focus { border-color: var(--green); }
+  .send { background: var(--green-deep); border: none; color: #fff; border-radius: 14px; padding: 0 22px; font-size: 14px; cursor: pointer; }
+  .send:hover { background: #5A7A53; }
+  .quick { display: flex; gap: 6px; margin-bottom: 8px; flex-wrap: wrap; }
+  .quick button { font-size: 11px; background: #fff; border: 1px solid var(--line); color: var(--sub); border-radius: 10px; padding: 5px 10px; cursor: pointer; }
+  .quick button:hover { color: var(--green-deep); border-color: var(--green); }
+  /* ---- right panel ---- */
+  .panel { width: 300px; background: #fff; border-left: 1px solid var(--line); padding: 18px; overflow-y: auto; }
+  .panel h3 { font-size: 13px; color: var(--green-deep); margin-bottom: 12px; }
+  .pcard { background: var(--ivory); border-radius: 14px; padding: 12px 14px; margin-bottom: 12px; font-size: 12px; line-height: 1.6; }
+  .pcard b { color: var(--orange-deep); }
+  .pcard .ok { color: var(--green-deep); font-weight: bold; }
+  .stage { background: #F0F6EC; border-radius: 10px; padding: 8px 10px; margin: 6px 0; }
+  .logs { font-size: 10px; color: var(--sub); line-height: 1.8; max-height: 300px; overflow-y: auto; }
+  .logs .ag { color: var(--green-deep); font-weight: bold; }
+  .demo-note { font-size: 10px; color: #B0A globe-warming; }
+  .note { font-size: 10px; color: #AC9; }
+</style>
+</head>
+<body>
+  <div class="side">
+    <div class="logo">
+      <svg width="40" height="40" viewBox="0 0 48 48"><circle cx="24" cy="30" r="14" fill="#F5C99B"/><path d="M24 20 Q20 8 10 6 Q24 2 26 16" fill="#A8C8A0"/><path d="M25 17 Q32 6 42 10 Q34 20 24 20" fill="#8FBF85"/><circle cx="19" cy="30" r="1.8" fill="#4A4238"/><circle cx="29" cy="30" r="1.8" fill="#4A4238"/><path d="M20 35 Q24 38 28 35" stroke="#4A4238" fill="none" stroke-width="1.5" stroke-linecap="round"/></svg>
+      <div><h1>Rootie</h1><div class="tag">習慣を育てるAIパートナー</div></div>
+    </div>
+    <div class="users">
+      <div class="label">デモユーザー（架空データ）</div>
+      <button class="user-btn on" data-id="user_a"><span class="avatar u-a">A</span><span>Aさん<small>忙しくて続かない</small></span></button>
+      <button class="user-btn" data-id="user_b"><span class="avatar u-b">B</span><span>Bさん<small>がんばりすぎ</small></span></button>
+      <button class="user-btn" data-id="user_c"><span class="avatar u-c">C</span><span>Cさん<small>習慣が安定</small></span></button>
+    </div>
+    <div class="triggers">
+      <button class="trig" onclick="trig('morning')">🌅 朝のリマインド</button>
+      <button class="trig n2" onclick="trig('evening')">🌙 夜の出席確認</button>
+    </div>
+    <a class="admin-link" href="/admin" target="_blank">🏟 ジム運営者向け管理Webを開く →</a>
+  </div>
+
+  <div class="main">
+    <div class="head">
+      <svg width="44" height="44" viewBox="0 0 48 48"><circle cx="24" cy="30" r="14" fill="#F5C99B"/><path d="M24 20 Q20 8 10 6 Q24 2 26 16" fill="#A8C8A0"/><path d="M25 17 Q32 6 42 10 Q34 20 24 20" fill="#8FBF85"/><circle cx="19" cy="30" r="1.8" fill="#4A4238"/><circle cx="29" cy="30" r="1.8" fill="#4A4238"/><path d="M20 35 Q24 38 28 35" stroke="#4A4238" fill="none" stroke-width="1.5" stroke-linecap="round"/></svg>
+      <div><h2 id="uname">Aさん</h2><div class="sub2" id="ugoal">週2回ジムで筋トレ</div></div>
+    </div>
+    <div class="chat" id="chat"></div>
+    <div class="foot">
+      <div class="quick">
+        <button onclick="quick('今日は仕事が忙しくて行けそうにない')">忙しくて行けない…</button>
+        <button onclick="quick('さっき行ってきた！')">行ってきた！</button>
+        <button onclick="quick('疲れて今日は無理')">疲れて無理…</button>
+        <button onclick="quick('また今度にする')">また今度</button>
+      </div>
+      <div class="input-row">
+        <input id="text" placeholder="Rootieにメッセージを送る" onkeydown="if(event.key==='Enter')send()">
+        <button class="send" onclick="send()">送信</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3>🌱 Rootieの分析と介入方針</h3>
+    <div id="panel"><div class="pcard">左でユーザーを選び、「朝のリマインド」を押すと、Orchestratorが複数エージェントを連携させて介入方針を組み立てます。</div></div>
+    <h3>🤖 Harness 実行ログ</h3>
+    <div class="logs" id="logs">—</div>
+  </div>
+
+<script>
+let userId = 'user_a';
+const chat = document.getElementById('chat');
+const $ = id => document.getElementById(id);
+
+function bubble(role, text, method) {
+  const m = document.createElement('div');
+  m.className = 'msg' + (role === 'user' ? ' me' : '');
+  const b = document.createElement('div'); b.className = 'bubble';
+  b.textContent = text;
+  if (method && role !== 'user') { const t = document.createElement('span'); t.className = 'method-tag'; t.textContent = '習慣化メソッド: ' + method; b.appendChild(t); }
+  m.appendChild(b);
+  const av = document.createElement('div');
+  if (role !== 'user') av.innerHTML = '<svg width="30" height="30" viewBox="0 0 48 48"><circle cx="24" cy="30" r="14" fill="#F5C99B"/><path d="M24 20 Q20 8 10 6 Q24 2 26 16" fill="#A8C8A0"/><circle cx="19" cy="30" r="1.8" fill="#4A4238"/><circle cx="29" cy="30" r="1.8" fill="#4A4238"/><path d="M20 35 Q24 38 28 35" stroke="#4A4238" fill="none" stroke-width="1.5" stroke-linecap="round"/></svg>';
+  m.prepend(av);
+  chat.appendChild(m); chat.scrollTop = chat.scrollHeight;
+}
+
+document.querySelectorAll('.user-btn').forEach(btn => btn.onclick = () => {
+  document.querySelectorAll('.user-btn').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on'); userId = btn.dataset.id; load();
+});
+
+async function load() {
+  const d = await (await fetch('/api/users/' + userId)).json();
+  $('uname').textContent = d.user.name; $('ugoal').textContent = d.user.goal + '（デモデータ）';
+  chat.innerHTML = '';
+  (d.messages || []).slice(-30).forEach(m => bubble(m.role, m.text, m.method));
+  if (!(d.messages || []).length) bubble('rootie', `${d.user.name}、こんにちは！Rootieです🌱\n「朝のリマインド」ボタンを押すと、あなたの行動データを分析した上で今日の提案をお送りします。`, null);
+  renderPanel(d);
+}
+function renderPanel(d) {
+  const a = d.analysis, p = d.policy;
+  if (!a) return;
+  const ago = a.achieved ? '✅ 習慣化成功判定（継続中）' : '🕒 成功判定未達（週1回 or 目標60%）';
+  $('panel').innerHTML = `
+    <div class="pcard"><b>ステージ ${a.stage.id}</b>: ${a.stage.name}<div style="color:#8C8478">${a.stage.basis}</div></div>
+    <div class="pcard"><b>継続阻害</b>: ${a.barriers.map(b => b.name).join('・')}<div style="color:#8C8478">確信度: ${a.confidence}${a.dataInsufficient ? '（データ不足のため推定）' : ''}</div></div>
+    <div class="pcard">${ago}<br>週${a.visitsPerWeek}回 / 目標達成率 ${Math.round(a.targetRate * 100)}%</div>
+    <div class="pcard"><b>介入方針</b>: ${p.methods.map(m => m.name).join(' + ')}${p.overridden ? '（スタッフ指定）' : ''}<div style="color:#8C8478">${(p.reason || []).join('<br>')}</div></div>`;
+  if (d.runs && d.runs[0]) $('logs').innerHTML = (d.runs[0].logs || []).map(l => `<div><span class="ag">${l.agent}</span> ${typeof l.detail === 'string' ? l.detail : (l.detail.result || l.detail.task || '')}</div>`).join('');
+}
+async function trig(t) {
+  const d = await (await fetch('/api/trigger', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId, trigger: t }) })).json();
+  bubble('rootie', d.reply, d.policy?.methods?.[0]?.name);
+  const dd = await (await fetch('/api/users/' + userId)).json(); renderPanel(dd);
+}
+async function send(text) {
+  const v = text || $('text').value; if (!v) return; $('text').value = '';
+  bubble('user', v);
+  const d = await (await fetch('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId, text: v }) })).json();
+  bubble('rootie', d.reply, d.policy?.methods?.[0]?.name);
+  const dd = await (await fetch('/api/users/' + userId)).json(); renderPanel(dd);
+}
+function quick(t) { send(t); }
+load();
+</script>
+</body>
+</html>

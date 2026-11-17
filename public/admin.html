@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rootie Admin — 会員の習慣形成ダッシュボード</title>
+<style>
+  :root {
+    --bg:#F6F7F6; --card:#FFFFFF; --line:#E8EBE8;
+    --green:#6F9A6A; --green-soft:#EAF2E8; --green-deep:#4F7A4B;
+    --orange:#DE9455; --orange-soft:#FBF0E3;
+    --red:#C97B7B; --red-soft:#F9ECEC;
+    --ink:#2A2F2C; --sub:#7C857E; --faint:#A9B1AA;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:"Hiragino Sans","Yu Gothic","Helvetica Neue",Arial,sans-serif;background:var(--bg);color:var(--ink);font-size:14px}
+  /* ---- header ---- */
+  .top{background:var(--card);border-bottom:1px solid var(--line);height:58px;display:flex;align-items:center;gap:14px;padding:0 28px;position:sticky;top:0;z-index:10}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:700;color:var(--green-deep);font-size:16px}
+  .brand .sub{font-weight:400;color:var(--sub);font-size:11px}
+  .top-actions{margin-left:auto;display:flex;gap:8px}
+  .btn{background:var(--card);border:1px solid var(--line);color:var(--sub);border-radius:8px;padding:7px 14px;font-size:12px;cursor:pointer}
+  .btn:hover{color:var(--green-deep);border-color:var(--green)}
+  /* ---- layout ---- */
+  .wrap{max-width:1180px;margin:0 auto;padding:26px 28px 70px}
+  .notes{font-size:10.5px;color:var(--faint);margin-bottom:18px}
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:22px}
+  .kpi{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px 16px}
+  .kpi .num{font-size:32px;font-weight:700;letter-spacing:-.5px;line-height:1.1}
+  .kpi .num small{font-size:16px;color:var(--sub);font-weight:600;margin-left:2px}
+  .kpi .lbl{font-size:12px;color:var(--ink);margin-top:6px;font-weight:600}
+  .kpi .note{font-size:10.5px;color:var(--faint);margin-top:4px;line-height:1.5}
+  .kpi.g .num{color:var(--green-deep)} .kpi.o .num{color:var(--orange)} .kpi.r .num{color:var(--red)}
+  .grid{display:grid;grid-template-columns:1fr 320px;gap:14px;align-items:start}
+  .grid>*{min-width:0}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin-bottom:14px}
+  .card h2{font-size:13px;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+  .card h2 .hint{font-size:10.5px;color:var(--faint);font-weight:400}
+  /* ---- table ---- */
+  .tbl-wrap{overflow-x:auto}
+  table{width:100%;border-collapse:collapse}
+  th{font-size:10.5px;color:var(--sub);text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);font-weight:600;white-space:nowrap}
+  td{padding:13px 10px;border-bottom:1px solid var(--line);vertical-align:middle;white-space:nowrap}
+  tbody tr{cursor:pointer}
+  tbody tr:hover{background:var(--green-soft)}
+  .who{display:flex;align-items:center;gap:9px}
+  .avatar{width:30px;height:30px;border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex:none}
+  .stage-cell{display:flex;flex-direction:column;gap:5px}
+  .segs{display:flex;gap:2px;width:130px}
+  .segs i{flex:1;height:6px;border-radius:2px;background:#E5EAE4}
+  .sname{font-size:10.5px;color:var(--sub);max-width:150px;overflow:hidden;text-overflow:ellipsis}
+  .chip{display:inline-block;font-size:10.5px;padding:3px 9px;border-radius:99px;background:var(--orange-soft);color:var(--orange);margin-right:4px;font-weight:600}
+  .chip.gray{background:#EFF1EE;color:var(--sub)}
+  .chip.green{background:var(--green-soft);color:var(--green-deep)}
+  .wbars{display:flex;align-items:flex-end;gap:3px;height:26px}
+  .wbars i{width:8px;border-radius:2px 2px 0 0;background:var(--green);opacity:.85}
+  .wbars i.zero{background:#E0E4DE}
+  .pwrap{display:flex;align-items:center;gap:8px}
+  .pbar{width:96px;height:7px;border-radius:99px;background:#E9ECE7;overflow:hidden;flex:none}
+  .pbar b{display:block;height:100%;border-radius:99px;background:var(--green)}
+  .pbar.mid b{background:var(--orange)} .pbar.low b{background:var(--red)}
+  .prate{font-size:11px;color:var(--sub)}
+  .badge{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600}
+  .dot{width:11px;height:11px;border-radius:50%;flex:none}
+  .badge.ok{color:var(--green-deep)} .badge.ok .dot{background:var(--green)}
+  .badge.warn{color:var(--orange)} .badge.warn .dot{background:var(--orange)}
+  .badge.follow{color:var(--red)} .badge.follow .dot{background:var(--red)}
+  .mshort{max-width:170px;overflow:hidden;text-overflow:ellipsis;display:inline-block;vertical-align:bottom}
+  .iconbtn{border:none;background:none;color:var(--faint);font-size:14px;cursor:pointer;padding:2px}
+  /* ---- dist ---- */
+  .legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+  .legend span{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;color:var(--sub)}
+  .legend i{width:10px;height:10px;border-radius:3px}
+  .bdist{display:flex;flex-direction:column;gap:7px;margin-top:4px}
+  .bdist .row{display:flex;align-items:center;gap:8px;font-size:12px}
+  .bdist .row b{width:14px;color:var(--ink)}
+  /* ---- logs ---- */
+  .fold{background:none;border:none;font-size:13px;color:var(--green-deep);cursor:pointer;font-weight:700;text-align:left;width:100%;padding:2px 0}
+  .fold::before{content:'▸ '}
+  #logsCard.open .fold::before{content:'▾ '}
+  .log-controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:4px 0 2px}
+  select{padding:6px 10px;border:1px solid var(--line);border-radius:8px;font-size:12px;background:var(--card)}
+  .runchips{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
+  .runchip{font-size:11px;padding:5px 11px;border-radius:99px;border:1px solid var(--line);background:var(--card);color:var(--sub);cursor:pointer}
+  .runchip.sel{border-color:var(--green);color:var(--green-deep);background:var(--green-soft)}
+  .flow{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin:8px 0 12px}
+  .fstep{display:inline-flex;flex-direction:column;align-items:center;background:var(--green-soft);color:var(--green-deep);border:1px solid transparent;border-radius:10px;padding:7px 13px;font-size:12px;cursor:pointer;font-weight:700}
+  .fstep small{font-weight:400;font-size:9.5px;color:var(--sub)}
+  .fstep:hover,.fstep.sel{border-color:var(--green)}
+  .farrow{color:var(--faint);font-size:13px}
+  .fpar{display:inline-flex;flex-direction:column;gap:5px;padding:6px;border:1px dashed var(--green);border-radius:11px;background:rgba(111,154,106,.04)}
+  .fpar .fstep{background:var(--card)}
+  .fdetail{background:var(--bg);border-radius:10px;padding:12px 15px;font-size:12px;line-height:1.9;white-space:pre-wrap;min-height:20px;color:var(--ink)}
+  .fdetail .ag{color:var(--green-deep);font-weight:700}
+  /* ---- slide-in panel ---- */
+  #overlay{position:fixed;inset:0;background:rgba(35,40,36,.28);opacity:0;pointer-events:none;transition:opacity .25s;z-index:20}
+  #overlay.show{opacity:1;pointer-events:auto}
+  #panel{position:fixed;top:0;right:0;height:100%;width:min(620px,100%);background:var(--card);box-shadow:-12px 0 40px rgba(0,0,0,.10);transform:translateX(105%);transition:transform .3s ease;z-index:30;overflow-y:auto;padding:26px 28px 40px}
+  #panel.open{transform:none}
+  .p-head{display:flex;align-items:flex-start;gap:13px;margin-bottom:20px}
+  .p-head .avatar{width:46px;height:46px;font-size:19px}
+  .p-head h2{font-size:19px}
+  .p-head .goal{font-size:11.5px;color:var(--sub);margin-top:3px}
+  .p-head .stageline{font-size:12px;color:var(--green-deep);margin-top:7px;font-weight:600}
+  .pclose{margin-left:auto;border:none;background:var(--bg);color:var(--sub);width:30px;height:30px;border-radius:50%;font-size:15px;cursor:pointer;flex:none}
+  .p-badge{margin-left:10px}
+  .p-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 22px}
+  @media(max-width:560px){.p-grid{grid-template-columns:1fr}}
+  .pcard{border-top:1px solid var(--line);padding:18px 0 20px}
+  .pcard:first-child{border-top:none}
+  .pcard h3{font-size:12px;color:var(--green-deep);margin-bottom:12px}
+  .weekbars{display:flex;align-items:flex-end;gap:12px;height:96px;padding-top:16px}
+  .weekbars .col{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;height:100%;justify-content:flex-end}
+  .weekbars .bar{width:100%;max-width:38px;border-radius:6px 6px 0 0;background:var(--green);opacity:.9;position:relative}
+  .weekbars .bar.zero{height:3px !important;background:#E0E4DE;opacity:1}
+  .weekbars .cnt{font-size:12px;font-weight:700;color:var(--ink)}
+  .weekbars .wl{font-size:10px;color:var(--faint)}
+  .ringwrap{display:flex;align-items:center;gap:16px}
+  .ringwrap .rv{display:flex;flex-direction:column}
+  .ringwrap .rv b{font-size:13px}
+  .ringwrap .rv span{font-size:10.5px;color:var(--sub)}
+  details{margin:8px 0;border-radius:8px}
+  summary{cursor:pointer;font-size:11.5px;color:var(--sub);padding:6px 0;list-style:none}
+  summary::before{content:'▸ '}
+  details[open] summary::before{content:'▾ '}
+  .evi{font-size:11.5px;color:var(--sub);line-height:1.8;border-left:3px solid var(--green-soft);padding-left:10px;margin:6px 0}
+  .gauge{display:inline-flex;gap:4px;vertical-align:middle;margin-right:8px}
+  .gauge i{width:18px;height:7px;border-radius:2px;background:#E5EAE4}
+  .gauge i.on{background:var(--green)}
+  .pillx{display:inline-block;font-size:10px;font-weight:700;padding:3px 10px;border-radius:99px;background:var(--red-soft);color:var(--red)}
+  .pol{background:var(--green-soft);border-radius:12px;padding:14px 16px;font-size:12.5px;line-height:1.8}
+  .pol .row{display:flex;gap:8px;margin:4px 0}
+  .pol .row .k{color:var(--sub);width:84px;flex:none;font-size:11.5px;padding-top:1px}
+  .quote{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 13px;margin-top:6px;white-space:pre-wrap}
+  .staffbox{margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .staffbox select{flex:1;min-width:120px}
+  .staffbox input{padding:7px 10px;border:1px solid var(--line);border-radius:8px;font-size:12px;flex:1;min-width:110px}
+  .tl{position:relative;padding-left:20px;margin-top:4px}
+  .tl::before{content:'';position:absolute;left:5px;top:6px;bottom:8px;width:2px;background:var(--line)}
+  .tl-item{position:relative;padding-bottom:14px;font-size:12px;line-height:1.7}
+  .tl-item::before{content:'';position:absolute;left:-19px;top:5px;width:8px;height:8px;border-radius:50%;background:var(--faint)}
+  .tl-item.pos::before{background:var(--green)} .tl-item.neg::before{background:var(--red)} .tl-item.neu::before{background:var(--orange)}
+  .tl-item b{font-size:12.5px}
+  .tl-item .res{font-size:10.5px;font-weight:700;margin-left:6px}
+  .tl-item .res.p{color:var(--green-deep)} .tl-item .res.n{color:var(--red)} .tl-item .res.m{color:var(--orange)}
+  .tl-item .txt{color:var(--sub);font-size:11.5px}
+  .toast{position:fixed;bottom:24px;left:50%;transform:translate(-50%,10px);background:var(--ink);color:#fff;font-size:12.5px;padding:10px 20px;border-radius:10px;opacity:0;transition:.3s;z-index:50;max-width:90vw}
+  .toast.show{opacity:1;transform:translate(-50%,0)}
+  @media(max-width:960px){.grid{grid-template-columns:1fr}}
+  @media(max-width:720px){.wrap{padding:18px 14px 60px}.top{padding:0 14px}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand">
+    <svg width="26" height="26" viewBox="0 0 48 48"><circle cx="24" cy="30" r="14" fill="#F5C99B"/><path d="M24 20 Q20 8 10 6 Q24 2 26 16" fill="#A8C8A0"/><path d="M25 17 Q32 6 42 10 Q34 20 24 20" fill="#8FBF85"/><circle cx="19" cy="30" r="1.8" fill="#4A4238"/><circle cx="29" cy="30" r="1.8" fill="#4A4238"/><path d="M20 35 Q24 38 28 35" stroke="#4A4238" fill="none" stroke-width="1.5" stroke-linecap="round"/></svg>
+    Rootie Admin <span class="sub">会員の習慣形成ダッシュボード</span>
+  </div>
+  <div class="top-actions">
+    <button class="btn" onclick="qaRun()">QA検証</button>
+    <button class="btn" onclick="resetDemo()">デモデータに戻す</button>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="notes">※ 表示中の3名は架空のデモデータです。分析はCALENDAR習慣化メソッド準拠の決定論的ルールエンジンによるもので、機械学習ではありません。</div>
+
+  <section class="kpis" id="kpis"></section>
+
+  <section class="grid">
+    <div class="card">
+      <h2>会員一覧 <span class="hint">行をクリックすると詳細が開きます</span></h2>
+      <div class="tbl-wrap"><table id="tbl"></table></div>
+    </div>
+    <div>
+      <div class="card">
+        <h2>ステージ分布 <span class="hint">14段階</span></h2>
+        <div id="dist"></div>
+        <div class="legend">
+          <span><i style="background:#C7DCC2"></i>開始 1-4</span>
+          <span><i style="background:#EFCB93"></i>過渡 5-9</span>
+          <span><i style="background:#7BA577"></i>定着 10-12</span>
+          <span><i style="background:#DFA9A9"></i>離脱 13-14</span>
+        </div>
+      </div>
+      <div class="card">
+        <h2>継続阻害の内訳</h2>
+        <div class="bdist" id="bdist"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card" id="logsCard">
+    <button class="fold" onclick="toggleLogs()">エージェント実行ログ（Harness）</button>
+    <div id="logBody" hidden>
+      <div class="log-controls">
+        <select id="logUser" onchange="renderRunChips()"></select>
+        <span style="font-size:11px;color:var(--faint)">実行を選択すると、Orchestratorが呼び出したエージェントの流れと判断内容が見られます</span>
+      </div>
+      <div class="runchips" id="runChips"></div>
+      <div class="flow" id="runFlow"></div>
+      <div class="fdetail" id="flowDetail">エージェントをクリックすると判断内容が表示されます</div>
+    </div>
+  </section>
+</main>
+
+<div id="overlay" onclick="closePanel()"></div>
+<aside id="panel"></aside>
+
+<script>
+const $ = q => document.querySelector(q);
+let USERS = [], METHODS = {}, RUNS = [], curRun = null;
+const AVC = { user_a:'#DE9455', user_b:'#C97B7B', user_c:'#6F9A6A' };
+const AG = { orchestrator:'統括', 'behavior-analysis':'行動分析', 'knowledge-graph':'知識グラフ', 'habit-strategy':'戦略選択', personalization:'パーソナライズ', 'feedback-evaluation':'評価', qa:'品質検証' };
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+async function init() {
+  const d = await (await fetch('/api/users')).json();
+  USERS = d.users;
+  const k = await (await fetch('/api/knowledge')).json();
+  METHODS = k.METHODS;
+  RUNS = (await (await fetch('/api/runs')).json()).runs;
+  render();
+  const qp = new URLSearchParams(location.search).get('user');
+  if (qp) openPanel(qp);
+  if (location.search.includes('audit=1')) setTimeout(auditPage, 1400);
+}
+
+function statusOf(u) {
+  const b = u.barriers[0]?.id;
+  if (u.achieved && b === 'none') return 'ok';
+  if (u.achieved) return 'warn';
+  return 'follow';
+}
+const BADGE = { ok:['ok','成功'], warn:['warn','注意'], follow:['follow','要フォロー'] };
+
+function wkBuckets(records) {
+  const c = [0, 0, 0, 0];
+  (records || []).forEach(r => { if (r.in) { const w = Math.min(3, Math.floor((27 - r.day) / 7)); c[w]++; } });
+  return c;
+}
+function bandColor(s) { return s <= 4 ? '#C7DCC2' : s <= 9 ? '#EFCB93' : s <= 12 ? '#7BA577' : '#DFA9A9'; }
+const today = () => new Date().toDateString();
+
+function render() {
+  renderKpis(); renderTable(); renderDist(); renderBdist(); renderLogControls();
+}
+
+function renderKpis() {
+  const total = USERS.length;
+  const ok = USERS.filter(u => u.achieved).length;
+  const follow = USERS.filter(u => statusOf(u) === 'follow').length;
+  const warn = USERS.filter(u => statusOf(u) === 'warn').length;
+  const todayRuns = RUNS.filter(r => { const ts = +r.id.split('_')[1]; return new Date(ts).toDateString() === today(); }).length;
+  $('#kpis').innerHTML = `
+    <div class="kpi"><div class="num">${total}<small>名</small></div><div class="lbl">会員数</div><div class="note">デモデータ（架空）</div></div>
+    <div class="kpi g"><div class="num">${total ? Math.round(ok / total * 100) : 0}<small>%</small></div><div class="lbl">習慣化成功率</div><div class="note">成功判定: 週1回以上 または 目標60%以上</div></div>
+    <div class="kpi r"><div class="num">${follow}<small>名</small></div><div class="lbl">要フォロー会員</div><div class="note">未達の会員（注意 ${warn}名は達成も阻害あり）</div></div>
+    <div class="kpi o"><div class="num">${todayRuns}<small>件</small></div><div class="lbl">今日の介入</div><div class="note">朝・夜・チャット介入の合計</div></div>`;
+}
+
+function renderTable() {
+  const head = `<tr><th>会員</th><th>習慣形成ステージ（14段階）</th><th>継続阻害</th><th>頻度（4週）</th><th>目標達成率</th><th>判定</th><th>AI介入方針</th><th></th></tr>`;
+  const rows = USERS.map(u => {
+    const st = statusOf(u);
+    const wk = wkBuckets(u.records || []);
+    const wkMax = Math.max(1, ...wk);
+    const bars = wk.map((c, i) => `<i style="height:${c ? 5 + c * 7 : 3}px" title="${['今週','1週前','2週前','3週前'][i]}: ${c}回"></i>`).join('');
+    const rate = Math.round(u.targetRate * 100);
+    const pcls = rate >= 60 ? '' : rate >= 30 ? 'mid' : 'low';
+    const [bc, bl] = BADGE[st];
+    return `<tr onclick="openPanel('${u.id}')">
+      <td><div class="who"><span class="avatar" style="background:${AVC[u.id] || '#8FA89B'}">${esc(u.name[0])}</span><b>${esc(u.name)}</b></div></td>
+      <td><div class="stage-cell">
+        <div class="segs" title="S${u.stage.id}/14 ${esc(u.stage.name)}">${Array.from({length:14},(_,i)=>`<i style="background:${i < u.stage.id ? bandColor(i+1) : ''}"></i>`).join('')}</div>
+        <div class="sname">S${u.stage.id}/14 ${esc(u.stage.name)}</div>
+      </div></td>
+      <td>${u.barriers.map(b => `<span class="chip${b.id==='none'?' gray':''}">${esc(b.name)}</span>`).join('')}</td>
+      <td><div class="wbars" title="今週〜3週前: ${wk.join(' / ')}回">${bars}</div></td>
+      <td><div class="pwrap"><div class="pbar ${pcls}"><b style="width:${Math.min(100, rate)}%"></b></div><span class="prate">${rate}%</span></div></td>
+      <td><span class="badge ${bc}"><span class="dot"></span>${bl}</span></td>
+      <td><span class="chip green mshort" title="${esc(u.methods.map(m => METHODS[m]?.name || m).join(' + '))}">${esc(u.methods.length ? METHODS[u.methods[0]]?.name || u.methods[0] : '—')}${u.methods.length > 1 ? ' +' + (u.methods.length - 1) : ''}</span>${u.overridden ? '<span class="chip" style="margin-left:2px">要員調整</span>' : ''}</td>
+      <td><button class="iconbtn">›</button></td>
+    </tr>`;
+  }).join('');
+  $('#tbl').innerHTML = `<thead>${head}</thead><tbody>${rows}</tbody>`;
+}
+
+function renderDist() {
+  const counts = Array(15).fill(0);
+  USERS.forEach(u => counts[u.stage.id]++);
+  let bars = '';
+  for (let s = 1; s <= 14; s++) {
+    const h = counts[s] ? 16 + counts[s] * 28 : 4;
+    const x = (s - 1) * 23 + 4;
+    bars += `<rect x="${x}" y="${118 - h}" width="15" height="${h}" rx="3" fill="${bandColor(s)}">${counts[s] ? `<title>S${s}: ${counts[s]}名</title>` : ''}</rect>`;
+    if (counts[s]) bars += `<text x="${x + 7.5}" y="${118 - h - 4}" font-size="10" font-weight="700" text-anchor="middle" fill="#4F7A4B">${counts[s]}</text>`;
+    bars += `<text x="${x + 7.5}" y="131" font-size="8" text-anchor="middle" fill="#A9B1AA">${s}</text>`;
+  }
+  $('#dist').innerHTML = `<svg viewBox="0 0 326 136" style="width:100%;height:auto">${bars}</svg>`;
+}
+
+function renderBdist() {
+  const map = {};
+  USERS.forEach(u => u.barriers.forEach(b => map[b.name] = (map[b.name] || 0) + 1));
+  $('#bdist').innerHTML = Object.entries(map).map(([n, c]) =>
+    `<div class="row"><b>${c}</b><span class="chip${n==='習慣化問題なし'?' gray':''}">${esc(n)}</span></div>`).join('') || '<div style="font-size:11px;color:var(--faint)">データなし</div>';
+}
+
+/* ---------- logs (Screen 3) ---------- */
+function toggleLogs() {
+  const c = $('#logsCard'); c.classList.toggle('open');
+  $('#logBody').hidden = !c.classList.contains('open');
+}
+function renderLogControls() {
+  $('#logUser').innerHTML = `<option value="">全ユーザー（最新）</option>` + USERS.map(u => `<option value="${u.id}">${esc(u.name)}</option>`).join('');
+  renderRunChips();
+}
+function renderRunChips() {
+  const uid = $('#logUser').value;
+  const runs = (uid ? RUNS.filter(r => r.userId === uid) : RUNS).slice(0, 10);
+  $('#runChips').innerHTML = runs.map(r => {
+    const t = new Date(+r.id.split('_')[1]);
+    const hh = ('0' + t.getHours()).slice(-2) + ':' + ('0' + t.getMinutes()).slice(-2);
+    return `<button class="runchip${curRun && curRun.id === r.id ? ' sel' : ''}" onclick="selectRun('${r.id}')">${({morning:'朝', evening:'夜', chat:'チャット', check:'確認', analyze:'分析', evaluate:'評価'}[r.trigger] || r.trigger)} ${hh}${r.reactionType ? '・' + r.reactionType : ''}</button>`;
+  }).join('') || '<span style="font-size:11px;color:var(--faint)">実行履歴がありません</span>';
+  if (!curRun && runs.length) selectRun(runs[0].id);
+  else if (!runs.length) { $('#runFlow').innerHTML = ''; $('#flowDetail').textContent = '実行履歴がありません'; }
+}
+function selectRun(id) {
+  curRun = RUNS.find(r => r.id === id) || null;
+  renderRunChips();
+  if (!curRun) return;
+  const plan = curRun.plan || [];
+  let steps = [];
+  const fe = plan.indexOf('feedback-evaluation'), ba = plan.indexOf('behavior-analysis');
+  if (fe > -1 && ba > -1) {
+    steps.push({ par: ['feedback-evaluation', 'behavior-analysis'] });
+    plan.forEach((n, i) => { if (n !== 'feedback-evaluation' && n !== 'behavior-analysis') steps.push({ n }); });
+  } else plan.forEach(n => steps.push({ n }));
+  $('#runFlow').innerHTML = steps.map((s, i) => {
+    const html = s.par
+      ? `<span class="fpar">${s.par.map(a => `<button class="fstep" data-ag="${a}">${AG[a] || a}<small>${a}</small></button>`).join('')}</span>`
+      : `<button class="fstep" data-ag="${s.n}">${AG[s.n] || s.n}<small>${s.n}</small></button>`;
+    return (i ? '<span class="farrow">→</span>' : '') + html;
+  }).join('');
+  $('#runFlow').querySelectorAll('.fstep').forEach(b => b.onclick = () => showFlowDetail(b.dataset.ag, b));
+  $('#flowDetail').textContent = 'エージェントをクリックすると判断内容が表示されます';
+}
+function showFlowDetail(ag, btn) {
+  $('#runFlow').querySelectorAll('.fstep').forEach(b => b.classList.remove('sel'));
+  btn.classList.add('sel');
+  const logs = (curRun.logs || []).filter(l => l.agent === ag);
+  const txt = logs.map(l => `<span class="ag">${AG[ag] || ag}</span> ${fmtDetail(l.detail)}`).join('\n') || '（この実行ではログなし）';
+  $('#flowDetail').innerHTML = txt;
+}
+function fmtDetail(d) {
+  if (typeof d === 'string') return d;
+  if (!d) return '';
+  const L = { task:'タスク', result:'結果', reasons:'理由', pastEvidence:'過去実績', evidence:'根拠', nextHint:'次の改善提言', retry:'再試行', error:'エラー', basis:'根拠', preview:'プレビュー', violations:'違反', chain:'連携', achieved:'成功判定' };
+  return Object.entries(d).map(([k, v]) => {
+    if (v === true) return (L[k]||k) + ':あり';
+    if (v === false || v == null || v === '') return '';
+    if (Array.isArray(v)) return (L[k]||k) + ': ' + v.map(x => typeof x === 'string' ? x : JSON.stringify(x)).join(' / ');
+    return (L[k]||k) + ': ' + String(v);
+  }).filter(Boolean).join('　｜　');
+}
+
+/* ---------- detail panel (Screen 2) ---------- */
+async function openPanel(id) {
+  const d = await (await fetch('/api/users/' + id)).json();
+  const u = d.user, a = d.analysis, p = d.policy;
+  const [bc, bl] = BADGE[statusOf({ achieved: a.achieved, barriers: a.barriers })];
+  const wk = wkBuckets(u.records);
+  const wkMax = Math.max(1, ...wk);
+  const rate = Math.round(a.targetRate * 100);
+  const R = 40, C = 2 * Math.PI * R;
+  const confLv = { '高': 3, '中': 2, '低': 1 }[a.confidence] || 1;
+  const msg = (d.runs.find(r => r.message)?.message) || [...(d.messages || [])].reverse().find(m => m.role === 'rootie')?.text || '（まだ介入メッセージはありません）';
+  const ev = d.runs.find(r => r.evaluation)?.evaluation;
+  const methodOpts = Object.entries(METHODS).sort((x, y) => x[1].no - y[1].no).map(([k, v]) => `<option value="${k}" ${(p && p.methods[0] && p.methods[0].id === k) ? 'selected' : ''}>${v.name}</option>`).join('');
+  const methodOpts2 = Object.entries(METHODS).sort((x, y) => x[1].no - y[1].no).map(([k, v]) => `<option value="${k}" ${(p && p.methods[1] && p.methods[1].id === k) ? 'selected' : ''}>${v.name}</option>`).join('');
+  const timeline = (u.pastInterventions || []).slice(-8).reverse().map(i => {
+    const rc = { positive:['p','効果あり'], neutral:['m','反応のみ'], negative:['n','効果なし'], pending:['m','評価中'] }[i.result] || ['m', i.result];
+    return `<div class="tl-item ${i.result}"><b>${esc(METHODS[i.method]?.name || i.method || '介入')}</b><span class="res ${rc[0]}">${rc[1]}</span><div class="txt">「${esc((i.text || '').slice(0, 60))}${(i.text||'').length > 60 ? '…' : ''}」${i.note ? '<br>' + esc(i.note) : ''}</div></div>`;
+  }).join('') || '<div style="font-size:12px;color:var(--faint)">介入履歴なし（「朝のリマインド」等で介入が始まります）</div>';
+  $('#panel').innerHTML = `
+    <div class="p-head">
+      <span class="avatar" style="background:${AVC[u.id] || '#8FA89B'}">${esc(u.name[0])}</span>
+      <div>
+        <h2>${esc(u.name)} <span class="badge ${bc} p-badge"><span class="dot"></span>${bl}</span></h2>
+        <div class="goal">${esc(u.goal)}（目標 週${u.targetDaysPerWeek}回・デモデータ）</div>
+        <div class="stageline">ステージ S${a.stage.id}/14「${esc(a.stage.name)}」</div>
+      </div>
+      <button class="pclose" onclick="closePanel()">✕</button>
+    </div>
+    <div class="p-grid">
+      <div class="pcard">
+        <h3>週別来館回数（過去28日）</h3>
+        <div class="weekbars">${wk.map((c, i) => `<div class="col"><span class="cnt">${c}</span><div class="bar ${c ? '' : 'zero'}" style="height:${c ? 8 + (c / wkMax) * 70 : 3}px"></div><span class="wl">${['今週','1週前','2週前','3週前'][i]}</span></div>`).join('')}</div>
+      </div>
+      <div class="pcard">
+        <h3>目標達成率</h3>
+        <div class="ringwrap">
+          <svg width="96" height="96" viewBox="0 0 96 96">
+            <circle cx="48" cy="48" r="${R}" fill="none" stroke="#E9ECE7" stroke-width="9"/>
+            <circle cx="48" cy="48" r="${R}" fill="none" stroke="${rate >= 60 ? '#6F9A6A' : rate >= 30 ? '#DE9455' : '#C97B7B'}" stroke-width="9" stroke-linecap="round" stroke-dasharray="${(a.targetRate * C).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 48 48)"/>
+            <text x="48" y="53" text-anchor="middle" font-size="20" font-weight="700" fill="#2A2F2C">${rate}%</text>
+          </svg>
+          <div class="rv"><b>週${a.visitsPerWeek}回</b><span>平均 ${a.avgMinutes}分 / 計${a.visitCount}回</span><span>${a.achieved ? '✅ 習慣化成功判定' : '🕒 判定未達（週1回 or 60%）'}</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="pcard">
+      <h3>継続阻害タイプと AI の分析理由</h3>
+      <div>${a.barriers.map(b => `<span class="chip${b.id === 'none' ? ' gray' : ''}" title="${esc(b.policy)}">${b.name}</span>`).join('')}</div>
+      <details><summary>判断根拠を表示</summary>${a.barrierEvidence.map(e => `<div class="evi"><b>${esc(e.type)}</b> — ${esc(e.evidence)}</div>`).join('')}</details>
+      <div style="font-size:12px;color:var(--sub)">確信度 <span class="gauge">${[1,2,3].map(i => `<i class="${i <= confLv ? 'on' : ''}"></i>`).join('')}</span> ${a.confidence} ${a.dataInsufficient ? '<span class="pillx">データ不足 → 推定</span>' : ''}</div>
+    </div>
+    <div class="pcard">
+      <h3>AI介入方針 ${p && p.overridden ? '<span class="chip" style="background:#FBF0E3;color:#DE9455">スタッフ調整中</span>' : ''}</h3>
+      <div class="pol">
+        <div class="row"><span class="k">選択メソッド</span><span>${p ? p.methods.map(m => `<span class="chip green">${esc(m.name)}</span>`).join('') : '—'}</span></div>
+        <div class="row"><span class="k">選んだ理由</span><span>${p ? ((p.reasons || [p.reason]).flat().map(r => esc(typeof r === 'string' ? r : JSON.stringify(r))).join('<br>') || '—') : '—'}</span></div>
+        <div class="row"><span class="k">次回介入</span><span>${p ? esc(p.timing || '—') : '—'}（上限 ${p ? p.maxDailyContacts : 1}回/日）</span></div>
+        <div class="row"><span class="k">確認指標</span><span>来館の有無 / チャット反応 / 達成率の変化${ev ? `　<span style="color:var(--sub)">直近評価: ${esc(ev.note)}（${ev.effect}）</span>` : ''}</span></div>
+        <div class="row"><span class="k">推奨メッセージ</span><span class="quote" style="flex:1">${esc(msg)}</span></div>
+        ${p && p.nextHint ? `<div class="row"><span class="k">次の改善</span><span>${esc(p.nextHint)}</span></div>` : ''}
+      </div>
+      <div class="staffbox">
+        <select id="pm1">${methodOpts}</select>
+        <select id="pm2">${methodOpts2}</select>
+        <input type="text" id="ptiming" placeholder="介入タイミング" value="${p ? esc(p.timing || '') : ''}">
+        <button class="btn" style="border-color:var(--green);color:var(--green-deep)" onclick="setPolicy('${u.id}')">方針を変更</button>
+        ${p && p.overridden ? `<button class="btn" onclick="clearPolicy('${u.id}')">AI自動に戻す</button>` : ''}
+      </div>
+      <div style="font-size:10px;color:var(--faint);margin-top:6px">変更した方針は次回以降のAI判断（Orchestrator統合フェーズ）で優先されます。</div>
+    </div>
+    <div class="pcard">
+      <h3>介入・評価タイムライン</h3>
+      <div class="tl">${timeline}</div>
+    </div>`;
+  $('#panel').classList.add('open');
+  $('#overlay').classList.add('show');
+}
+function closePanel() { $('#panel').classList.remove('open'); $('#overlay').classList.remove('show'); }
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closePanel(); });
+
+async function setPolicy(id) {
+  await fetch('/api/users/' + id + '/policy', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ methods: [pm1.value, pm2.value], timing: ptiming.value, reason: '管理Webからスタッフが調整' }) });
+  toast('介入方針を変更しました（次回のAI判断に反映）');
+  openPanel(id);
+  const d = await (await fetch('/api/users')).json(); USERS = d.users; renderTable(); renderKpis(); renderDist(); renderBdist();
+}
+async function clearPolicy(id) {
+  await fetch('/api/users/' + id + '/policy', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ clear: true }) });
+  toast('AIの自動判断に戻しました');
+  openPanel(id);
+  const d = await (await fetch('/api/users')).json(); USERS = d.users; renderTable(); renderKpis(); renderDist(); renderBdist();
+}
+function toast(m) { const t = document.createElement('div'); t.className = 'toast'; t.textContent = m; document.body.appendChild(t); setTimeout(() => t.classList.add('show'), 10); setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 350); }, 2800); }
+async function qaRun() {
+  const d = await (await fetch('/api/qa', { method: 'POST' })).json();
+  toast(d.allPass ? 'QA Agent: 全会員で検証PASS' : 'QA Agent: 要修正あり（実行ログを確認）');
+  RUNS = (await (await fetch('/api/runs')).json()).runs;
+  renderRunChips();
+}
+async function resetDemo() { await fetch('/api/reset', { method: 'POST' }); curRun = null; await init(); toast('デモデータを初期化しました'); }
+
+/* ---------- self audit (?audit=1): overflow detection for headless check ---------- */
+function auditPage() {
+  const issues = [];
+  if (document.body.scrollWidth > window.innerWidth + 2) issues.push(`body H-overflow ${document.body.scrollWidth}>${window.innerWidth}`);
+  document.querySelectorAll('.card,td,th,.kpi,.chip,.btn,.fold,.pcard,.pol,summary,.tl-item').forEach(el => {
+    const cs = getComputedStyle(el);
+    if (cs.textOverflow === 'ellipsis' || cs.overflowX !== 'visible') return;
+    if (el.scrollWidth > el.clientWidth + 3) issues.push(`overflow: ${(el.className || el.tagName).toString().slice(0, 30)} [${(el.textContent || '').slice(0, 18)}] ${el.scrollWidth}>${el.clientWidth}`);
+  });
+  const out = 'AUDIT-RESULT: ' + (issues.length ? issues.join(' ;; ') : 'OK');
+  const pre = document.createElement('pre'); pre.id = 'auditOut'; pre.textContent = out; pre.style.display = 'none';
+  document.body.appendChild(pre);
+  document.title = out.slice(0, 180);
+}
+init();
+</script>
+</body>
+</html>
